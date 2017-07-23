@@ -10,39 +10,10 @@
 // Direcion del Robot (Propia)
 #define MY_ADDRESS     5
 
-
-#if defined (__AVR_ATmega32U4__) // Feather 32u4 w/Radio
-  #define RFM69_CS      8
-  #define RFM69_INT     7
-  #define RFM69_RST     4
-  #define LED           13
-#endif
-
 #if defined(ARDUINO_SAMD_FEATHER_M0) // Feather M0 w/Radio
   #define RFM69_CS      8
   #define RFM69_INT     3
   #define RFM69_RST     4
-  #define LED           13
-#endif
-
-#if defined (__AVR_ATmega328P__)  // Feather 328P w/wing
-  #define RFM69_INT     3  // 
-  #define RFM69_CS      4  //
-  #define RFM69_RST     2  // "A"
-  #define LED           13
-#endif
-
-#if defined(ESP8266)    // ESP8266 feather w/wing
-  #define RFM69_CS      2    // "E"
-  #define RFM69_IRQ     15   // "B"
-  #define RFM69_RST     16   // "D"
-  #define LED           0
-#endif
-
-#if defined(ESP32)    // ESP32 feather w/wing
-  #define RFM69_RST     13   // same as LED
-  #define RFM69_CS      33   // "B"
-  #define RFM69_INT     27   // "A"
   #define LED           13
 #endif
 
@@ -63,9 +34,6 @@ void setup()
   pinMode(RFM69_RST, OUTPUT);
   digitalWrite(RFM69_RST, LOW);
 
-  //Serial.println("Feather Addressed RFM69 RX Test!");
-  //Serial.println();
-
   // Reset Manual
   digitalWrite(RFM69_RST, HIGH);
   delay(10);
@@ -76,10 +44,8 @@ void setup()
     Serial.println("RFM69 radio init Fallo");
     while (1);
   }
-  //Serial.println("RFM69 radio init OK!");
   
   // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM (for low power module)
-  // No encryption
   if (!rf69.setFrequency(RF69_FREQ)) {
     //Serial.println("setFrequency failed");
   }
@@ -94,12 +60,9 @@ void setup()
   rf69.setEncryptionKey(key);
   
   pinMode(LED, OUTPUT);
-
-  //Serial.print("RFM69 radio @");  Serial.print((int)RF69_FREQ);  Serial.println(" MHz");
+  
 }
 
-
-// Dont put this on the stack:
 uint8_t data[] = "k";
 uint8_t buf[RH_RF69_MAX_MESSAGE_LEN];
 
@@ -110,7 +73,7 @@ void loop() {
     uint8_t len = sizeof(buf);
     uint8_t from;
     if (rf69_manager.recvfromAck(buf, &len, &from)) {
-      buf[len] = 0; // zero out remaining string
+      buf[len] = 0;
       if(from==2){ //Valida que el texto venga del Control
         //Serial.print("Paquete Recibido del #"); Serial.print(from);
         //Serial.print(" [RSSI :");
