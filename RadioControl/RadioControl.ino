@@ -93,7 +93,7 @@ void loop(){
     // Esperamos la respuesta del Robot
     uint8_t len = sizeof(buf);
     uint8_t from;   
-    if (rf69_manager.recvfromAckTimeout(buf, &len, 2000, &from)) {
+    /*if (rf69_manager.recvfromAckTimeout(buf, &len, 2000, &from)) {
       buf[len] = 0; // zero out remaining string      
       //Serial.print(" [RSSI :");
       //Serial.print(rf69.lastRssi());
@@ -101,7 +101,7 @@ void loop(){
       //Serial.println((char*)buf);     
     } else {
       //Serial.println("No reply, is anyone listening?");
-    }
+    }*/
   } else {
     //Serial.println("Sending failed (no ack)");
   }

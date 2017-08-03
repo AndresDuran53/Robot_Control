@@ -1,6 +1,18 @@
 #include <SPI.h>
 #include <RH_RF69.h>
 #include <RHReliableDatagram.h>
+#include <AccelStepper.h>
+
+/************ Steppers Setup ***************/
+int pinStep1 = A0;
+int pinDir1 = A1;
+int pinStep2 = A2;
+int pinDir2 = A3;
+int distanciaPorSennal = 50; //Cantidad de pasos
+int velocidadStandar = 200;
+
+AccelStepper stepper1(1, pinStep1, pinDir1); // 1 = Driver Mode
+AccelStepper stepper2(1, pinStep2, pinDir2);
 
 /************ Radio Setup ***************/
 
@@ -33,6 +45,14 @@ void setup()
   pinMode(LED, OUTPUT);     
   pinMode(RFM69_RST, OUTPUT);
   digitalWrite(RFM69_RST, LOW);
+
+  //Steppers Speed
+  stepper1.setMaxSpeed(200.0);
+  stepper1.setAcceleration(100.0);
+  stepper1.moveTo(0);
+  stepper2.setMaxSpeed(200.0);
+  stepper2.setAcceleration(100.0);
+  stepper2.moveTo(0);
 
   // Reset Manual
   digitalWrite(RFM69_RST, HIGH);
@@ -86,8 +106,8 @@ void loop() {
         //Serial.println((int)buf[1]);
         //Serial.print("B: ");
         //Serial.println((int)buf[2]);
-        if (!rf69_manager.sendtoWait(data, sizeof(data), from))
-          Serial.println("Sending failed (no ack)");
+        goForward((int)buf[0],(int)buf[1]);        
+        //if (!rf69_manager.sendtoWait(data, sizeof(data), from))  Serial.println("Sending failed (no ack)");
         if((int)buf[2]) 
           digitalWrite(LED,LOW);
         else
@@ -95,4 +115,38 @@ void loop() {
       }
     }
   }
+  stepper1.run();
+  stepper2.run();
+}
+
+void goForward(int pX, int pY){
+  double forward = 0;
+  if (pY>=140||pY<=115){
+    forward = (map(pY,0,255,-100,100))/100.0;
+  }
+  double pR = 1;
+  double pI = 1;
+  if (pX>=140||pX<=115){
+    if(forward==0){
+      pR = (map(pX,0,255,100,-100))/100.0;  
+      pI = (map(pX,0,255,-100,100))/100.0;  
+      stepper1.setSpeed(200*pR);
+      stepper2.setSpeed(200*pR);  
+      stepper1.setCurrentPosition(200*pR);
+      stepper2.setCurrentPosition(-(200*pR));
+      return;
+    }
+    pR = (map(pX,0,255,0,200));
+    pI = (map(pX,0,255,200,0));
+  }
+  //Serial.print("forwad");
+  //Serial.println(forward);
+  //Serial.print("pR");
+  //Serial.println(pR);
+
+  stepper1.setSpeed((200*forward));
+  stepper2.setSpeed(-(200*forward));  
+  stepper1.setCurrentPosition((200*forward));
+  stepper2.setCurrentPosition(-(200*forward));
+  
 }
