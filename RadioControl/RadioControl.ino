@@ -76,13 +76,6 @@ void loop(){
   int posY=map(analogRead(A0),0,1023,0,255);
   int botonPress=digitalRead(12);
   
-  //Serial.print("X: ");
-  //Serial.println(posX);
-  //Serial.print("Y: ");
-  //Serial.println(posY);
-  //Serial.print("B: ");
-  //Serial.println(botonPress);
-  
   char radiopacket[4];
   radiopacket[0]=(char)posX;
   radiopacket[1]=(char)posY;
@@ -93,15 +86,6 @@ void loop(){
     // Esperamos la respuesta del Robot
     uint8_t len = sizeof(buf);
     uint8_t from;   
-    /*if (rf69_manager.recvfromAckTimeout(buf, &len, 2000, &from)) {
-      buf[len] = 0; // zero out remaining string      
-      //Serial.print(" [RSSI :");
-      //Serial.print(rf69.lastRssi());
-      //Serial.print("] : ");
-      //Serial.println((char*)buf);     
-    } else {
-      //Serial.println("No reply, is anyone listening?");
-    }*/
   } else {
     //Serial.println("Sending failed (no ack)");
   }
