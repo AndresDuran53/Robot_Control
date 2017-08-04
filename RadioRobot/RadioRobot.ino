@@ -8,8 +8,8 @@ int pinStep1 = A0;
 int pinDir1 = A1;
 int pinStep2 = A2;
 int pinDir2 = A3;
-int distanciaPorSennal = 50; //Cantidad de pasos
-int velocidadStandar = 200;
+int distanciaPorSennal = 200; //Cantidad de pasos
+int velocidadStandar = 1000;
 
 AccelStepper stepper1(1, pinStep1, pinDir1); // 1 = Driver Mode
 AccelStepper stepper2(1, pinStep2, pinDir2);
@@ -47,10 +47,10 @@ void setup()
   digitalWrite(RFM69_RST, LOW);
 
   //Steppers Speed
-  stepper1.setMaxSpeed(200.0);
+  stepper1.setMaxSpeed(1000.0);
   stepper1.setAcceleration(100.0);
   stepper1.moveTo(0);
-  stepper2.setMaxSpeed(200.0);
+  stepper2.setMaxSpeed(1000.0);
   stepper2.setAcceleration(100.0);
   stepper2.moveTo(0);
 
@@ -130,23 +130,21 @@ void goForward(int pX, int pY){
     if(forward==0){
       pR = (map(pX,0,255,100,-100))/100.0;  
       pI = (map(pX,0,255,-100,100))/100.0;  
-      stepper1.setSpeed(200*pR);
-      stepper2.setSpeed(200*pR);  
-      stepper1.setCurrentPosition(200*pR);
-      stepper2.setCurrentPosition(-(200*pR));
+      stepper1.setSpeed(velocidadStandar*pR);
+      stepper2.setSpeed(velocidadStandar*pR);  
+      stepper1.setCurrentPosition(distanciaPorSennal*pR);
+      stepper2.setCurrentPosition(-(distanciaPorSennal*pR));
       return;
     }
-    pR = (map(pX,0,255,0,200));
-    pI = (map(pX,0,255,200,0));
   }
   //Serial.print("forwad");
   //Serial.println(forward);
   //Serial.print("pR");
   //Serial.println(pR);
 
-  stepper1.setSpeed((200*forward));
-  stepper2.setSpeed(-(200*forward));  
-  stepper1.setCurrentPosition((200*forward));
-  stepper2.setCurrentPosition(-(200*forward));
+  stepper1.setSpeed((velocidadStandar*forward));
+  stepper2.setSpeed(-(velocidadStandar*forward));  
+  stepper1.setCurrentPosition((distanciaPorSennal*forward));
+  stepper2.setCurrentPosition(-(distanciaPorSennal*forward));
   
 }
