@@ -95,19 +95,7 @@ void loop() {
     if (rf69_manager.recvfromAck(buf, &len, &from)) {
       buf[len] = 0;
       if(from==2){ //Valida que el texto venga del Control
-        //Serial.print("Paquete Recibido del #"); Serial.print(from);
-        //Serial.print(" [RSSI :");
-        //Serial.print(rf69.lastRssi());
-        //Serial.print("] : ");
-        //Serial.println((char*)buf);
-        //Serial.print("X: ");
-        //Serial.println((int)buf[0]);
-        //Serial.print("Y: ");
-        //Serial.println((int)buf[1]);
-        //Serial.print("B: ");
-        //Serial.println((int)buf[2]);
         goForward((int)buf[0],(int)buf[1]);        
-        //if (!rf69_manager.sendtoWait(data, sizeof(data), from))  Serial.println("Sending failed (no ack)");
         if((int)buf[2]) 
           digitalWrite(LED,LOW);
         else
@@ -137,11 +125,6 @@ void goForward(int pX, int pY){
       return;
     }
   }
-  //Serial.print("forwad");
-  //Serial.println(forward);
-  //Serial.print("pR");
-  //Serial.println(pR);
-
   stepper1.setSpeed((velocidadStandar*forward));
   stepper2.setSpeed(-(velocidadStandar*forward));  
   stepper1.setCurrentPosition((distanciaPorSennal*forward));
